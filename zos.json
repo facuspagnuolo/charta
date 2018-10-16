@@ -1,0 +1,9 @@
+{
+  "zosversion": "2",
+  "name": "charta-eth",
+  "version": "1.0.0",
+  "contracts": {
+    "TokenRegistry": "TokenRegistry",
+    "Collateralizer": "Collateralizer"
+  }
+}
