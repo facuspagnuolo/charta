@@ -7,13 +7,33 @@ module.exports = {
             gas: 6712390,
             gasPrice: 1,
         },
+        local: {
+            host: 'localhost',
+            port: 8545,
+            network_id: '*',
+            gas: 6000000,
+            gasPrice: 2e9, // 2 Gwei
+        },
+        ropsten: {
+            host: 'localhost',
+            port: 8565,
+            network_id: 3,
+            gas: 500000,
+            gasPrice: 10e9, // 10 Gwei
+        },
+        rinkeby: {
+            host: 'localhost',
+            port: 8565,
+            network_id: 4,
+            gas: 500000,
+            gasPrice: 10e9, // 10 Gwei
+        },
         kovan: {
-            host: "localhost",
-            port: 8546,
-            network_id: "42",
-            from: "0x84e2229ec0c4031e7ceb78aaaa8421e48022d0c3",
-            gas: 6712390,
-            gasPrice: 4000000000, // 4 GWei
+            host: 'localhost',
+            port: 8555,
+            network_id: 42,
+            gas: 500000,
+            gasPrice: 10e9, // 10 Gwei
         },
         live: {
             host: "localhost",
