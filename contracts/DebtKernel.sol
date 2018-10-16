@@ -18,12 +18,15 @@
 
 pragma solidity ^0.4.18;
 
+import "zos-lib/contracts/Initializable.sol";
+import "openzeppelin-zos/contracts/ownership/Ownable.sol";
+import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
+import "openzeppelin-zos/contracts/math/SafeMath.sol";
+import "openzeppelin-zos/contracts/token/ERC20/ERC20.sol";
+
 import "./DebtToken.sol";
 import "./TermsContract.sol";
 import "./TokenTransferProxy.sol";
-import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 /**
@@ -35,7 +38,7 @@ import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
  *
  * Author: Nadav Hollander -- Github: nadavhollander
  */
-contract DebtKernel is Pausable {
+contract DebtKernel is Initializable, Ownable, Pausable {
     using SafeMath for uint;
 
     enum Errors {
@@ -125,10 +128,12 @@ contract DebtKernel is Pausable {
         bytes32 debtOrderHash;
     }
 
-    function DebtKernel(address tokenTransferProxyAddress)
-        public
+    function initialize(address tokenTransferProxyAddress, address _sender)
+        public initializer
     {
         TOKEN_TRANSFER_PROXY = tokenTransferProxyAddress;
+        Ownable.initialize(_sender);
+        Pausable.initialize(_sender);
     }
 
     ////////////////////////
@@ -422,11 +427,12 @@ contract DebtKernel is Pausable {
             return false;
         }
 
+        // TODO: this method is not defined in DebtToken
         // Invariant: debt order's issuance must not already be minted as debt token
-        if (debtToken.exists(uint(debtOrder.issuance.agreementId))) {
-            LogError(uint8(Errors.DEBT_ISSUED), debtOrder.debtOrderHash);
-            return false;
-        }
+        // if (debtToken.exists(uint(debtOrder.issuance.agreementId))) {
+        //    LogError(uint8(Errors.DEBT_ISSUED), debtOrder.debtOrderHash);
+        //    return false;
+        // }
 
         // Invariant: debt order's issuance must not have been cancelled
         if (issuanceCancelled[debtOrder.issuance.agreementId]) {

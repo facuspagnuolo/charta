@@ -18,15 +18,17 @@
 
 pragma solidity ^0.4.18;
 
+// External dependencies.
+import "zos-lib/contracts/Initializable.sol";
+import "openzeppelin-zos/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-zos/contracts/ownership/Ownable.sol";
+import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
+import "openzeppelin-zos/contracts/introspection/IERC165.sol";
+import "openzeppelin-zos/contracts/token/ERC721/ERC721Full.sol";
+
 // Internal dependencies.
 import "./DebtRegistry.sol";
-import "./ERC165.sol";
 import { PermissionsLib, PermissionEvents } from "./libraries/PermissionsLib.sol";
-
-// External dependencies.
-import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
-import "zeppelin-solidity/contracts/token/ERC721/ERC721Token.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 /**
@@ -37,7 +39,7 @@ import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
  *
  * Author: Nadav Hollander -- Github: nadavhollander
  */
-contract DebtToken is ERC721Token, ERC165, Pausable, PermissionEvents {
+contract DebtToken is Initializable, Ownable, Pausable, IERC165, ERC721Full, PermissionEvents {
     using PermissionsLib for PermissionsLib.Permissions;
 
     DebtRegistry public registry;
@@ -51,11 +53,13 @@ contract DebtToken is ERC721Token, ERC165, Pausable, PermissionEvents {
     /**
      * Constructor that sets the address of the debt registry.
      */
-    function DebtToken(address _registry)
-        public
-        ERC721Token("DebtToken", "DDT")
+    function initialize(address _registry, address _sender)
+        public initializer
     {
         registry = DebtRegistry(_registry);
+        ERC721Full.initialize("DebtToken", "DDT");
+        Ownable.initialize(_sender);
+        Pausable.initialize(_sender);
     }
 
     /**

@@ -18,8 +18,11 @@
 
 pragma solidity ^0.4.18;
 
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/token/ERC721/ERC721.sol";
+import "zos-lib/contracts/Initializable.sol";
+import "openzeppelin-zos/contracts/math/SafeMath.sol";
+import "openzeppelin-zos/contracts/ownership/Ownable.sol";
+import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
+import "openzeppelin-zos/contracts/token/ERC721/ERC721Enumerable.sol";
 
 import "./TermsContract.sol";
 import "./DebtRegistry.sol";
@@ -37,7 +40,7 @@ import {PermissionsLib, PermissionEvents} from "./libraries/PermissionsLib.sol";
   * NOTE: The `collateralize` method in this contract can only be called by a trusted TermsContract,
   * specified by the contract's owner.
   */
-contract ERC721Collateralizer is Pausable, PermissionEvents {
+contract ERC721Collateralizer is Initializable, Ownable, Pausable, PermissionEvents {
     using PermissionsLib for PermissionsLib.Permissions;
     using SafeMath for uint;
 
@@ -84,11 +87,12 @@ contract ERC721Collateralizer is Pausable, PermissionEvents {
         _;
     }
 
-    function ERC721Collateralizer(
+    function initialize(
         address _contractRegistry,
         address _tokenRegistry,
-        address _cryptoKittiesContract
-    ) public {
+        address _cryptoKittiesContract,
+        address _sender
+    ) public initializer {
         ContractRegistry contractRegistry = ContractRegistry(_contractRegistry);
 
         // Get the DebtRegistry contract from the ContractRegistry.
@@ -97,6 +101,8 @@ contract ERC721Collateralizer is Pausable, PermissionEvents {
         tokenRegistry = ERC721TokenRegistry(_tokenRegistry);
         // Keep track of the CryptoKitties contract, for specific workarounds.
         cryptoKittiesContract = _cryptoKittiesContract;
+        Ownable.initialize(_sender);
+        Pausable.initialize(_sender);
     }
 
     /**
@@ -145,7 +151,7 @@ contract ERC721Collateralizer is Pausable, PermissionEvents {
         // Store debtor in mapping, effectively demarcating that the agreement is now collateralized.
         agreementToDebtor[agreementId] = debtor;
 
-        ERC721 erc721token = ERC721(collateralTokenAddress);
+        ERC721Enumerable erc721token = ERC721Enumerable(collateralTokenAddress);
         address custodian = address(this);
 
         // Transfer the collateral asset to this contract.
@@ -206,7 +212,7 @@ contract ERC721Collateralizer is Pausable, PermissionEvents {
         );
 
         // Instantiate an instance of the token, in order to initiate a transfer.
-        ERC721 erc721token = ERC721(collateralTokenAddress);
+        ERC721Enumerable erc721token = ERC721Enumerable(collateralTokenAddress);
 
         // Apply a hack for CryptoKitties, granting transfer approval to this contract itself.
         if (cryptoKittiesContract == collateralTokenAddress) {
@@ -276,7 +282,7 @@ contract ERC721Collateralizer is Pausable, PermissionEvents {
         address beneficiary = debtRegistry.getBeneficiary(agreementId);
 
         // Instantiate an instance of the token, in order to initiate a transfer.
-        ERC721 erc721token = ERC721(collateralTokenAddress);
+        ERC721Enumerable erc721token = ERC721Enumerable(collateralTokenAddress);
 
         // Apply a hack for CryptoKitties, granting transfer approval to this contract itself.
         if (cryptoKittiesContract == collateralTokenAddress) {
@@ -404,7 +410,7 @@ contract ERC721Collateralizer is Pausable, PermissionEvents {
 
         // Resolve address of ERC721 contract associated with this agreement in token registry.
         address collateralTokenAddress = tokenRegistry.getTokenAddressByIndex(collateralContractIndex);
-        ERC721 erc721token = ERC721(collateralTokenAddress);
+        ERC721Enumerable erc721token = ERC721Enumerable(collateralTokenAddress);
 
         // If the contract implements the Enumerable extension, then we can use the token reference
         // parameters as an index to the token. Otherwise, we assume that the token reference parameter

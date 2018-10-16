@@ -36,12 +36,8 @@
   "repository": "git@github.com:dharmaprotocol/charta.git",
   "author": "Nadav Hollander <nadav@dharma.io>",
   "license": "ISC",
-  "pre-commit": [
-    "prettify",
-    "lint"
-  ],
   "dependencies": {
-    "zeppelin-solidity": "1.8.0",
+    "openzeppelin-zos": "git+https://github.com/OpenZeppelin/openzeppelin-zos.git#19610325924e03f008bb57dd8868f196bb7e3c98",
     "zos": "^2.0.0-alpha.8",
     "zos-lib": "^2.0.0-alpha.8"
   },

@@ -19,9 +19,12 @@
 pragma solidity ^0.4.18;
 
 import "./MockContract.sol";
-import "zeppelin-solidity/contracts/token/ERC721/ERC721Receiver.sol";
+import "openzeppelin-zos/contracts/token/ERC721/IERC721Receiver.sol";
 
-contract MockERC721Receiver is ERC721Receiver, MockContract {
+contract MockERC721Receiver is IERC721Receiver, MockContract {
+    // Equals to `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`
+    // which can be also obtained as `IERC721Receiver(0).onERC721Received.selector`
+    bytes4 private constant ERC721_RECEIVED = 0x150b7a02;
 
     // Internal state controllable via setters.
     bool internal shouldRevert = false;

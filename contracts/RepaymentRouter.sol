@@ -18,11 +18,12 @@
 
 pragma solidity ^0.4.18;
 
+import "zos-lib/contracts/Initializable.sol";
+import "openzeppelin-zos/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
 import "./DebtRegistry.sol";
 import "./TermsContract.sol";
 import "./TokenTransferProxy.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
 
 /**
@@ -34,7 +35,7 @@ import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
  *
  * Authors: Jaynti Kanani -- Github: jdkanani, Nadav Hollander -- Github: nadavhollander
  */
-contract RepaymentRouter is Pausable {
+contract RepaymentRouter is Initializable, Pausable {
     DebtRegistry public debtRegistry;
     TokenTransferProxy public tokenTransferProxy;
 
@@ -57,9 +58,10 @@ contract RepaymentRouter is Pausable {
     /**
      * Constructor points the repayment router at the deployed registry contract.
      */
-    function RepaymentRouter (address _debtRegistry, address _tokenTransferProxy) public {
+    function initialize(address _debtRegistry, address _tokenTransferProxy, address _sender) public initializer {
         debtRegistry = DebtRegistry(_debtRegistry);
         tokenTransferProxy = TokenTransferProxy(_tokenTransferProxy);
+        Pausable.initialize(_sender);
     }
 
     /**

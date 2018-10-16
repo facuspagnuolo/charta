@@ -18,8 +18,11 @@
 
 pragma solidity ^0.4.18;
 
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "zos-lib/contracts/Initializable.sol";
+import "openzeppelin-zos/contracts/math/SafeMath.sol";
+import "openzeppelin-zos/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-zos/contracts/ownership/Ownable.sol";
+import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
 
 import "./TermsContract.sol";
 import "./DebtRegistry.sol";
@@ -32,9 +35,9 @@ import { PermissionsLib, PermissionEvents } from "./libraries/PermissionsLib.sol
   * Contains functionality for collateralizing assets, by transferring them from
   * a debtor address to this contract as a custodian.
   *
-  * Authors (in no particular order): nadavhollander, saturnial, jdkanani, graemecode
+  * Authors (in no particular order)ope, : nadavhollander, saturnial, jdkanani, graemecode
   */
-contract Collateralizer is Pausable, PermissionEvents {
+contract Collateralizer is Initializable, Ownable, Pausable, PermissionEvents {
     using PermissionsLib for PermissionsLib.Permissions;
     using SafeMath for uint;
 
@@ -89,6 +92,7 @@ contract Collateralizer is Pausable, PermissionEvents {
         debtRegistry = DebtRegistry(_debtRegistry);
         tokenRegistry = TokenRegistry(_tokenRegistry);
         tokenTransferProxy = TokenTransferProxy(_tokenTransferProxy);
+        Ownable.initialize(_sender);
         Pausable.initialize(_sender);
     }
 

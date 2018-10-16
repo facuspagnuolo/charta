@@ -18,10 +18,11 @@
 
 pragma solidity ^0.4.18;
 
+import "zos-lib/contracts/Initializable.sol";
+import "openzeppelin-zos/contracts/math/SafeMath.sol";
+import "openzeppelin-zos/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
 import "./ContractRegistry.sol";
-import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 /**
@@ -31,7 +32,7 @@ import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
  * Authors: Bo Henderson <bohendo> & Shivani Gupta <shivgupt> & Dharma Team
  * DIP: https://github.com/dharmaprotocol/DIPs/issues/1
  */
-contract CreditorProxy is Pausable {
+contract CreditorProxy is Initializable, Pausable {
     using SafeMath for uint;
 
     enum Errors {
@@ -66,10 +67,11 @@ contract CreditorProxy is Pausable {
         bytes32 indexed _creditorCommitmentHash
     );
 
-    function CreditorProxy(address _contractRegistry)
-        public
+    function initialize(address _contractRegistry, address _sender)
+        public initializer
     {
         contractRegistry = ContractRegistry(_contractRegistry);
+        Pausable.initialize(_sender);
     }
 
     /*

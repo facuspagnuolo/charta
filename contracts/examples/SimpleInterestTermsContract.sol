@@ -18,7 +18,7 @@
 
 pragma solidity ^0.4.18;
 
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-zos/contracts/math/SafeMath.sol";
 
 import "../ContractRegistry.sol";
 

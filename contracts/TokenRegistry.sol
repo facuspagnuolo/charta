@@ -1,6 +1,7 @@
 pragma solidity ^0.4.18;
 
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zos-lib/contracts/Initializable.sol";
+import "openzeppelin-zos/contracts/ownership/Ownable.sol";
 
 
 /**
@@ -17,7 +18,7 @@ import "zeppelin-solidity/contracts/ownership/Ownable.sol";
  * governance mechanisms, we intend to shift ownership of this utility
  * contract to the Dharma community.
  */
-contract TokenRegistry is Ownable {
+contract TokenRegistry is Initializable, Ownable {
     mapping (bytes32 => TokenAttributes) public symbolHashToTokenAttributes;
     string[256] public tokenSymbolList;
     uint8 public tokenSymbolListLength;
@@ -31,6 +32,10 @@ contract TokenRegistry is Ownable {
         string name;
         // The number of digits that come after the decimal place when displaying token value.
         uint8 numDecimals;
+    }
+
+    function initialize(address _sender) public initializer {
+        Ownable.initialize(_sender);
     }
 
     /**

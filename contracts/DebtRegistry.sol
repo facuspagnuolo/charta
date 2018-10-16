@@ -18,9 +18,11 @@
 
 pragma solidity ^0.4.18;
 
+import "zos-lib/contracts/Initializable.sol";
+import "openzeppelin-zos/contracts/math/SafeMath.sol";
+import "openzeppelin-zos/contracts/ownership/Ownable.sol";
+import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
 import { PermissionsLib, PermissionEvents } from "./libraries/PermissionsLib.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
 
 /**
@@ -31,7 +33,7 @@ import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
  *
  * Author: Nadav Hollander -- Github: nadavhollander
  */
-contract DebtRegistry is Pausable, PermissionEvents {
+contract DebtRegistry is Initializable, Ownable, Pausable, PermissionEvents {
     using SafeMath for uint;
     using PermissionsLib for PermissionsLib.Permissions;
 
@@ -90,6 +92,11 @@ contract DebtRegistry is Pausable, PermissionEvents {
     modifier nonNullBeneficiary(address beneficiary) {
         require(beneficiary != address(0));
         _;
+    }
+
+    function initialize(address _sender) public initializer {
+        Ownable.initialize(_sender);
+        Pausable.initialize(_sender);
     }
 
     /* Ensures an entry with the specified agreement ID exists within the debt registry. */
