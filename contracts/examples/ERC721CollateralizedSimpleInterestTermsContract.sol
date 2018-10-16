@@ -16,7 +16,7 @@
 
 */
 
-pragma solidity 0.4.18;
+pragma solidity ^0.4.18;
 
 import "./SimpleInterestTermsContract.sol";
 import "../ERC721Collateralizer.sol";

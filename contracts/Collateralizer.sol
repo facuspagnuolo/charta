@@ -16,7 +16,7 @@
 
 */
 
-pragma solidity 0.4.18;
+pragma solidity ^0.4.18;
 
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
@@ -78,16 +78,18 @@ contract Collateralizer is Pausable, PermissionEvents {
         _;
     }
 
-    function Collateralizer(
+    function initialize(
         address _debtKernel,
         address _debtRegistry,
         address _tokenRegistry,
-        address _tokenTransferProxy
-    ) public {
+        address _tokenTransferProxy,
+        address _sender
+    ) public initializer {
         debtKernelAddress = _debtKernel;
         debtRegistry = DebtRegistry(_debtRegistry);
         tokenRegistry = TokenRegistry(_tokenRegistry);
         tokenTransferProxy = TokenTransferProxy(_tokenTransferProxy);
+        Pausable.initialize(_sender);
     }
 
     /**
