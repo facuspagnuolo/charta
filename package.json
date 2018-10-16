@@ -41,7 +41,9 @@
     "lint"
   ],
   "dependencies": {
-    "zeppelin-solidity": "1.8.0"
+    "zeppelin-solidity": "1.8.0",
+    "zos": "^2.0.0-alpha.8",
+    "zos-lib": "^2.0.0-alpha.8"
   },
   "devDependencies": {
     "@0xproject/abi-gen": "0.2.3",
